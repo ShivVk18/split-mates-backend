@@ -72,6 +72,7 @@ enum NotificationType {
   PAYMENT_RECEIVED
   GROUP_INVITE
   FRIEND_REQUEST
+  FRIEND_REQUEST_ACCEPTED
   REMINDER
 }
 
@@ -92,20 +93,28 @@ enum ActivityType {
 model User {
   id              String   @id @default(cuid())
   name            String
+  userName        String   @unique
   email           String   @unique
   password        String
   phone           String?
   avatar          String?
-  timezone        String   @default("UTC")
-  currency        String   @default("USD")
+  timezone        String   @default("IST")
+  currency        String   @default("INR")
   isActive        Boolean  @default(true)
   isOnline        Boolean  @default(false)
   lastActiveAt    DateTime?
   lastLoginAt     DateTime?
-  refreshToken    String?  // For refresh token storage
+  refreshToken    String?  
+  otp                 String?
+  otpExpiry           DateTime?
+  isOtpVerified       Boolean            @default(false)
+  otpAttempts         Int                @default(0)
+  otpBlockedUntil     DateTime?
+
+
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-
+   
   groups          GroupMember[]
   createdGroups   Group[]      @relation("GroupCreatedBy")
   expenses        Expense[]    @relation("ExpensePaidBy")

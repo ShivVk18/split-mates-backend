@@ -6,6 +6,7 @@ const generateAccessToken = (userId) => {
       _id: user.id,
       email: user.email,
       name: user.name,
+      userName:user.userName,
       isActive: user.isActive,
       isOnline: user.isOnline,
     },

@@ -28,13 +28,22 @@ const updateRefreshToken = async(userId,refreshToken) => {
     await prisma.user.update({
         where:{id:userId},
         data:{
-            refreshToken:refreshToken
+            refreshToken:refreshToken,
+            
         }
     })
 }
 
 const clearRefreshToken = async(userId) => {
-    return await updateRefreshToken(userId,null)
+    
+   return await prisma.user.update({
+        where:{id:userId},
+        data:{
+            refreshToken:null, 
+            isOnline:false,
+            isOtpVerified:false
+        }
+    })
 }
 
 const getCookieOptions =  () => (
@@ -45,6 +54,8 @@ const getCookieOptions =  () => (
         maxAge:7*24*60*60*1000 
     }
 )
+
+
 
 
 export {generateTokens,getCookieOptions,updateRefreshToken,hashedPassword,verifyPassword,clearRefreshToken}
