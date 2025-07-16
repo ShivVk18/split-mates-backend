@@ -58,6 +58,29 @@ const emailTemplates = () => (
     </div>
   `,
 }),
+
+groupInvite: (data) => ({
+  subject: `You're invited to join the group "${data.groupName}" on SplitMates`,
+  html: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #4A90E2; text-align: center;">You're Invited to Join ${data.groupName}</h2>
+      <p>Hi there,</p>
+      <p>You have been invited to join the group <strong>${data.groupName}</strong> on <strong>SplitMates</strong>.</p>
+      <p>Click the button below to accept or decline the invitation:</p>
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${data.inviteLink}" style="background-color: #4A90E2; color: #fff; padding: 12px 20px; text-decoration: none; border-radius: 5px;">Accept Invite</a>
+      </div>
+      <p>If you did not expect this invitation, you can safely ignore this email.</p>
+      <p>Note: This invite will expire in 24 hours.</p>
+      <br>
+      <p>Best regards,<br>SplitMates Team</p>
+      <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+      <p style="font-size: 12px; color: #666; text-align: center;">
+        This is an automated message. Please do not reply to this email.
+      </p>
+    </div>
+  `,
+}),
 }
 )
 

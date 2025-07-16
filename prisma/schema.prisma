@@ -87,6 +87,7 @@ enum ActivityType {
   GROUP_LEFT
   MEMBER_ADDED
   MEMBER_REMOVED
+  GROUP_UPDATED
 }
  
 
@@ -132,7 +133,7 @@ model Group {
   id          String   @id @default(cuid())
   name        String
   description String?
-  currency    String   @default("USD")
+  currency    String   @default("INR")
   category    GroupCategory @default(GENERAL)
   isActive    Boolean  @default(true)
   createdBy   String
