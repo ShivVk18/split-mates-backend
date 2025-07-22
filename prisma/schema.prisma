@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 enum SplitType {
   EQUAL
   PERCENTAGE
@@ -89,56 +88,54 @@ enum ActivityType {
   MEMBER_REMOVED
   GROUP_UPDATED
 }
- 
 
 model User {
-  id              String   @id @default(cuid())
+  id              String    @id @default(cuid())
   name            String
-  userName        String   @unique
-  email           String   @unique
+  userName        String    @unique
+  email           String    @unique
   password        String
   phone           String?
   avatar          String?
-  timezone        String   @default("IST")
-  currency        String   @default("INR")
-  isActive        Boolean  @default(true)
-  isOnline        Boolean  @default(false)
+  timezone        String    @default("IST")
+  currency        String    @default("INR")
+  isActive        Boolean   @default(true)
+  isOnline        Boolean   @default(false)
   lastActiveAt    DateTime?
   lastLoginAt     DateTime?
-  refreshToken    String?  
-  otp                 String?
-  otpExpiry           DateTime?
-  isOtpVerified       Boolean            @default(false)
-  otpAttempts         Int                @default(0)
-  otpBlockedUntil     DateTime?
+  refreshToken    String?
+  otp             String?
+  otpExpiry       DateTime?
+  isOtpVerified   Boolean   @default(false)
+  otpAttempts     Int       @default(0)
+  otpBlockedUntil DateTime?
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-   
-  groups          GroupMember[]
-  createdGroups   Group[]      @relation("GroupCreatedBy")
-  expenses        Expense[]    @relation("ExpensePaidBy")
-  splits          Split[]
-  settlements     Settlement[] @relation("SettlementPaidBy")
-  receivedPayments Settlement[] @relation("SettlementPaidTo")
-  reminders       Reminder[]
-  notifications   Notification[]
-  friendships     Friendship[] @relation("UserFriendships")
-  friendOf        Friendship[] @relation("FriendOf")
-  activities      Activity[]
+  groups           GroupMember[]
+  createdGroups    Group[]        @relation("GroupCreatedBy")
+  expenses         Expense[]      @relation("ExpensePaidBy")
+  splits           Split[]
+  settlements      Settlement[]   @relation("SettlementPaidBy")
+  receivedPayments Settlement[]   @relation("SettlementPaidTo")
+  reminders        Reminder[]
+  notifications    Notification[]
+  friendships      Friendship[]   @relation("UserFriendships")
+  friendOf         Friendship[]   @relation("FriendOf")
+  activities       Activity[]
 }
 
 model Group {
-  id          String   @id @default(cuid())
+  id          String        @id @default(cuid())
   name        String
   description String?
-  currency    String   @default("INR")
+  currency    String        @default("INR")
   category    GroupCategory @default(GENERAL)
-  isActive    Boolean  @default(true)
+  isActive    Boolean       @default(true)
   createdBy   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   creator     User          @relation("GroupCreatedBy", fields: [createdBy], references: [id])
   members     GroupMember[]
@@ -149,65 +146,65 @@ model Group {
 }
 
 model GroupMember {
-  id        String   @id @default(cuid())
-  userId    String
-  groupId   String
-  joinedAt  DateTime @default(now())
-  isActive  Boolean  @default(true)
+  id       String   @id @default(cuid())
+  userId   String
+  groupId  String
+  joinedAt DateTime @default(now())
+  isActive Boolean  @default(true)
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@unique([userId, groupId])
 }
 
 model GroupInvite {
-  id        String      @id @default(cuid())
+  id        String       @id @default(cuid())
   groupId   String
   email     String
-  token     String      @unique
+  token     String       @unique
   status    InviteStatus @default(PENDING)
   expiresAt DateTime
-  createdAt DateTime    @default(now())
+  createdAt DateTime     @default(now())
 
-  group     Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@unique([groupId, email])
 }
 
 model Friendship {
-  id        String   @id @default(cuid())
+  id        String           @id @default(cuid())
   userId    String
   friendId  String
   status    FriendshipStatus @default(PENDING)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 
-  user      User @relation("UserFriendships", fields: [userId], references: [id], onDelete: Cascade)
-  friend    User @relation("FriendOf", fields: [friendId], references: [id], onDelete: Cascade)
+  user   User @relation("UserFriendships", fields: [userId], references: [id], onDelete: Cascade)
+  friend User @relation("FriendOf", fields: [friendId], references: [id], onDelete: Cascade)
 
   @@unique([userId, friendId])
 }
 
 model Expense {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   groupId     String?
   paidById    String
   description String
   amount      Float
-  currency    String @default("USD")
+  currency    String    @default("USD")
   splitType   SplitType @default(EQUAL)
-  date        DateTime @default(now())
-  isSettled   Boolean  @default(false)
+  date        DateTime  @default(now())
+  isSettled   Boolean   @default(false)
   notes       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  group     Group?   @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  paidBy    User     @relation("ExpensePaidBy", fields: [paidById], references: [id])
-  splits    Split[]
-  receipts  Receipt[]
-  tags      ExpenseTag[]
+  group      Group?       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  paidBy     User         @relation("ExpensePaidBy", fields: [paidById], references: [id])
+  splits     Split[]
+  receipts   Receipt[]
+  tags       ExpenseTag[]
   activities Activity[]
 }
 
@@ -219,48 +216,48 @@ model Split {
   percentage Float?
   isSettled  Boolean @default(false)
 
-  expense    Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-  user       User    @relation(fields: [userId], references: [id])
+  expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
 
   @@unique([expenseId, userId])
 }
 
 model Settlement {
-  id          String   @id @default(cuid())
+  id          String           @id @default(cuid())
   groupId     String?
   paidById    String
   paidToId    String
   amount      Float
-  currency    String @default("USD")
+  currency    String           @default("USD")
   description String?
-  method      PaymentMethod @default(CASH)
+  method      PaymentMethod    @default(CASH)
   status      SettlementStatus @default(PENDING)
   settledAt   DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
-  group     Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  paidBy    User   @relation("SettlementPaidBy", fields: [paidById], references: [id])
-  paidTo    User   @relation("SettlementPaidTo", fields: [paidToId], references: [id])
+  group      Group?     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  paidBy     User       @relation("SettlementPaidBy", fields: [paidById], references: [id])
+  paidTo     User       @relation("SettlementPaidTo", fields: [paidToId], references: [id])
   activities Activity[]
 }
 
 model Receipt {
-  id        String   @id @default(cuid())
-  expenseId String
-  fileName  String
-  fileUrl   String
-  fileSize  Int?
-  mimeType  String?
+  id         String   @id @default(cuid())
+  expenseId  String
+  fileName   String
+  fileUrl    String
+  fileSize   Int?
+  mimeType   String?
   uploadedAt DateTime @default(now())
 
-  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 }
 
 model Tag {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  color       String   @default("#6B7280")
+  id          String       @id @default(cuid())
+  name        String       @unique
+  color       String       @default("#6B7280")
   description String?
   expenses    ExpenseTag[]
 }
@@ -269,58 +266,58 @@ model ExpenseTag {
   expenseId String
   tagId     String
 
-  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([expenseId, tagId])
 }
 
 model Reminder {
-  id          String      @id @default(cuid())
-  userId      String
-  type        ReminderType @default(PAYMENT_DUE)
-  title       String
-  message     String
-  isRead      Boolean     @default(false)
+  id           String       @id @default(cuid())
+  userId       String
+  type         ReminderType @default(PAYMENT_DUE)
+  title        String
+  message      String
+  isRead       Boolean      @default(false)
   scheduledFor DateTime?
-  createdAt   DateTime    @default(now())
+  createdAt    DateTime     @default(now())
 
-  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Notification {
-  id         String           @id @default(cuid())
-  userId     String
-  type       NotificationType @default(GENERAL)
-  title      String
-  message    String
-  data       Json?            
-  isRead     Boolean          @default(false)
-  seen       Boolean          @default(false)  
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType @default(GENERAL)
+  title     String
+  message   String
+  data      Json?
+  isRead    Boolean          @default(false)
+  seen      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])  
+  @@index([userId])
   @@map("notifications")
 }
 
-
-
 model Activity {
-  id          String   @id @default(cuid())
-  userId      String
-  groupId     String?
-  expenseId   String?
+  id           String       @id @default(cuid())
+  userId       String
+  groupId      String?
+  expenseId    String?
   settlementId String?
-  type        ActivityType
-  action      String
-  metadata    Json?
-  createdAt   DateTime @default(now())
+  type         ActivityType
+  action       String
+  metadata     Json?
+  createdAt    DateTime     @default(now())
 
-  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  group       Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  expense     Expense? @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-  settlement  Settlement? @relation(fields: [settlementId], references: [id], onDelete: Cascade)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group      Group?      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  expense    Expense?    @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  settlement Settlement? @relation(fields: [settlementId], references: [id], onDelete: Cascade)
 }
+
+
